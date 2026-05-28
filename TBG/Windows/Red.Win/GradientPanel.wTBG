@@ -1,0 +1,17 @@
+TBG 7.0
+ГП: 13
+Сглаживание: 1
+Размеры: 1018 762
+GradientFillRectangle -fgc ff2429 -logic " [0,0]" -coord "2 0.051557 0.010066 0.255365 0.226334"
+GradientFillRectangle -fs 1 -fgc ff2429 -logic " [0,1]" -coord "2 0.500940 0.008166 0.717719 0.231001"
+GradientFillRectangle -fs 2 -fgc ff2429 -logic " [0,2]" -coord "2 0.273999 0.010066 0.480137 0.234113"
+GradientFillRectangle -fs 3 -fgc ff2429 -logic " [0,3]" -coord "2 0.738488 0.009821 0.945985 0.238781"
+GradientFillRectangle -fs 4 -fgc ff2429 -logic " [0,4]" -coord "2 0.052898 0.257113 0.256530 0.469052"
+GradientFillRectangle -fs 5 -fgc ff2429 -logic " [0,5]" -coord "2 0.278941 0.260100 0.482466 0.475275"
+GradientFillRectangle -fs 6 -fgc ff2429 -logic " [0,6]" -coord "2 0.501805 0.256302 0.715390 0.475275"
+GradientFillRectangle -fs 7 -fgc ff2429 -logic " [0,7]" -coord "2 0.738522 0.260165 0.948314 0.476831"
+GradientFillRectangle -fs 8 -fgc ff2429 -logic " [0,8]" -coord "2 0.737477 0.502045 0.949479 0.716437"
+GradientFillRectangle -fs 9 -fgc ff2429 -logic " [0,9]" -coord "2 0.506145 0.503400 0.716555 0.717993"
+GradientFillRectangle -fs 10 -fgc ff2429 -logic " [0,10]" -coord "2 0.052864 0.499530 0.256530 0.717993"
+GradientFillRectangle -fs 11 -fgc ff2429 -logic " [0,11]" -coord "2 0.277807 0.503644 0.483631 0.717993"
+GradientFillRectangle -fs 12 -fgc ff2429 -logic " [0,12]" -coord "2 0.054325 0.744407 0.255365 0.988717"

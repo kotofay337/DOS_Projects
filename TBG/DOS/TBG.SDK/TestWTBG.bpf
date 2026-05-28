@@ -1,0 +1,8 @@
+USEUNIT("Test.cpp");
+USEFORM("TestWTBG.cpp", TestForm);
+USELIB("..\..\TBGW.SDK\Lib\tbgwl.lib");
+USELIB("..\..\..\TBG.SDK\LIB\tbg_tcw.lib");
+//---------------------------------------------------------------------------
+This file is used by the project manager only and should be treated like the project file
+
+main

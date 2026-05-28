@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="TestWTBG.exe"/>
+    <OBJFILES value="Test.obj TestWTBG.obj"/>
+    <RESFILES value=""/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) TestWTBG.dfm"/>
+    <LIBFILES value="..\..\TBGW.SDK\Lib\tbgwl.lib ..\..\..\DOS\TBG.SDK\LIB\tbg_tcw.lib 
+      ..\..\GdiPlus\Gdiplus.lib &quot;E:\Program Files\Borland\CBuilder6\Lib\Psdk\msimg32.lib&quot;"/>
+    <LIBRARIES value="vcl.lib rtl.lib"/>
+    <SPARELIBS value="rtl.lib vcl.lib"/>
+    <PACKAGES value="rtl.bpi vcl.bpi bcb2kaxserver.bpi vclx.bpi proide50.bpi vclie.bpi 
+      bcbie.bpi bcbsmp.bpi crbide50.bpi dsnap.bpi inet.bpi inetdb.bpi dbrtl.bpi 
+      vcldb.bpi bdertl.bpi vcldbx.bpi adortl.bpi dss.bpi teeui.bpi teedb.bpi 
+      tee.bpi ibxpress.bpi nmfast.bpi dclocx.bpi qrpt.bpi teeqr.bpi webdsnap.bpi 
+      direct50.bpi rcpkg50.bpi stride50.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value=""/>
+    <SYSDEFINES value="NO_STRICT"/>
+    <MAINSOURCE value="TestWTBG.bpf"/>
+    <INCLUDEPATH value="..\..\TBGW.SDK\Include;..\..\..\DOS\TBG.SDK\INCLUDE;..\..\GdiPlus;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\..\..\DOS\TBG.SDK\LIB;..\..\TBGW.SDK\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I..\..\TBGW.SDK\Include -I..\..\..\DOS\TBG.SDK\INCLUDE -I..\..\GdiPlus 
+      -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -C -fp -X- -r- -a1 -5 -b- -k- -vi 
+      -tWC -tWM -c"/>
+    <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-D&quot;&quot; -ap -Tpe -x"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0x32.obj sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="TestWTBG.bpf" FORMNAME="" UNITNAME="TestWTBG" CONTAINERID="BPF" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Test.cpp" FORMNAME="" UNITNAME="Test" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="TestWTBG.cpp" FORMNAME="TestForm" UNITNAME="TestWTBG" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\TBGW.SDK\Lib\tbgwl.lib" FORMNAME="" UNITNAME="tbgwl.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\..\DOS\TBG.SDK\LIB\tbg_tcw.lib" FORMNAME="" UNITNAME="tbg_tcw.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\GdiPlus\Gdiplus.lib" FORMNAME="" UNITNAME="Gdiplus.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="E:\Program Files\Borland\CBuilder6\Lib\Psdk\msimg32.lib" FORMNAME="" UNITNAME="msimg32.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1049
+CodePage=1251
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=11
+Item0=..\..\TBGW.SDK\Include;..\..\..\DOS\TBG.SDK\INCLUDE;..\..\GdiPlus;$(BCB)\include;$(BCB)\include\vcl
+Item1=..\..\TBGW.SDK\Include;..\..\..\DOS\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item2=$(BCB)\include;$(BCB)\include\vcl;..\..\TBGW.SDK\Include;..\..\..\TBG.SDK\INCLUDE
+Item3=$(BCB)\include;$(BCB)\include\vcl;E:\Home\Alex\RED.WIN\TBGW.SDK\Include;E:\Home\Alex\TBG.SDK\INCLUDE
+Item4=..\..\TBGW.SDK\Include;..\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item5=F:\Home\Alex\RED.WIN\TBGW.SDK\Include\;..\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item6=$(BCB)\include;$(BCB)\include\vcl;..\TBG.SDK\INCLUDE
+Item7=(BCB)\include;$(BCB)\include\vcl;F:\Home\Alex\TBG.SDK\INCLUDE
+Item8=$(BCB)\include;$(BCB)\include\vcl
+Item9=$(BCB)\include;$(BCB)\include\vcl;F:\Home\Alex\RED.WIN
+Item10=\\User02\F\Home\Alex\RED.WIN;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=4
+Item0=..\..\..\DOS\TBG.SDK\LIB;..\..\TBGW.SDK\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=$(BCB)\lib\obj;$(BCB)\lib
+Item2=F:\Home\Alex\RED.WIN;$(BCB)\lib\obj;$(BCB)\lib
+Item3=\\User02\F\Home\Alex\RED.WIN;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=7
+Item0=..\..\Tests\TBGW
+Item1=F:\Home\Alex\TBG.SDK\SRC\;E:\Home\Alex\TBG.SDK\SRC\;E:\Home\Alex\RED.WIN\TBGW.SDK\Include\
+Item2=F:\Home\Alex\TBG.SDK\SRC\;E:\Home\Alex\TBG.SDK\SRC\
+Item3=F:\Home\Alex\TBG.SDK\SRC\
+Item4=Z:\RED.WIN;F:\Home\Alex\TBG.SDK\SRC\
+Item5=Z:\RED.WIN
+Item6=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=2
+Item0=_DEBUG
+Item1=_EDITOR_
+
+[Debugging]
+DebugSourceDirs=..\..\Tests\TBGW
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

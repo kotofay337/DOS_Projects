@@ -1,0 +1,1065 @@
+//-----------------------------------------------------------------------
+//
+//      TurBoGraphica v5.00
+//
+//
+//      RED5_000.CPP
+//
+//      Главный файл TBG
+//
+//-----------------------------------------------------------------------
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <bios.h>
+#include <dos.h>
+#include <dir.h>
+#include <io.h>
+#include <string.h>
+#include <conio.h>
+#include <graphics.h>
+#include <alloc.h>
+
+#include "red5.h"
+
+//void (interrupt *old_break )(...);
+//void  interrupt  new_break  (...);
+
+void _Cdecl simplex_font(void);
+
+extern int far _Cdecl   simplex_font_far[];
+
+extern FILE *mperr;
+
+int huge DetectVESA(void)
+{
+   return 0x102;
+}/* DetectVESA */
+
+
+PCK pck=
+{
+ "c:", // div_path
+ "*",  // sbl
+ "",   // Fn_fon_pcx
+ "",   // Fn_fon_tbg
+ "",   // Fn_work_tbg
+ "",   // Fn_work_pcx
+ EGA_GREEN,      // col_lt /* цвет линии,текста */
+ SOLID_LINE,     // stl_l  /* стиль линии */
+ NORM_WIDTH,     // thi_l  /* толщина линии */
+ EGA_MAGENTA,    // col_f  /* цвет закраски */
+ SOLID_FILL,     // stl_f  /* стиль закраски */
+ DEFAULT_FONT,   // fnt_t  /* стиль шрифта текста  */
+ HORIZ_DIR,      // dir_t  /* ориентация текста */
+ 1,              // siz_t  /* размер символа текста */
+ max_ig_mode,    // DETECT режим инициализации графики
+ mode_save_all_tbg,
+ mode_load_new_tbg,
+ mode_del_ge,
+ mode_copy_ge,
+ mode_move_ge,
+ mode_show_all,
+ mode_indic_ge,
+ {OFF},            // сетка
+ {ON,ON,ON},       // режим корректуры L-R-E
+ {ON,ON,ON},       // режим корректуры B-Z-F
+ {ON,ON,ON,ON,ON}, // режим корректуры T
+ 0,                // меню стилей линии
+ 0,                // выравнивание горизонталь
+ 0,                // выравнивание вертикаль
+ TIP_line,         // тип графического элемента для поиска
+ mode_exit_se,     // режим выхода
+ KOM_elip,         // режим рисования эллипса
+ KOM_line          // режим рисования линии
+};// pck
+
+int  MaxX,MaxY;// max значения X,Y
+char tip_file; // тип загруженного файла
+int  LE_TOP=-1;   // число логических элементов в файле
+int  LE_TOP_Ram=-1;   // число логических элементов в рамке
+
+
+int pcxtype = pcxVGA_12;
+char pcxpal[800];
+
+unsigned int skankod;//код нажатой клавиши
+
+/* определения для мыши */
+short int key_mouse,x_mouse,y_mouse,getkey_left,getkey_right;
+int mouse_yes=ON;/* есть мышь */
+int pos_ms=0;       /* номер позиции мыши */
+int pos_ms_pred=-1; /* предыдущий номер позиции мыши */
+/* определения для меню */
+
+/* основное */
+char *menu;/* сохранение места под меню */
+short int xmin_m, ymin_m, xmax_m, ymax_m;// размер области 'под меню'
+CHAR SaveTest;// признак необходимости сохранения
+
+
+OBJECT **menu_1;/* указатель на меню_1 */
+int col_act=EGA_BLUE;/* активный цвет сложной команды  1,1 */
+int col_pas=EGA_RED;/* пассивный цвет сложной команды 1,2 */
+int col_fon1_mn1=EGA_RED;/* цвет фона для текста подсказок */
+int col_fon2_mn1=EGA_RED;/* цвет фона для заданного элемента  */
+int col_fon3_mn1=EGA_RED;/* цвет фона для текущих значений элемента */
+int col_fon4_mn1=EGA_RED;/* цвет фона для парaметров списка LE */
+int col_fon5_mn1=EGA_RED;/* цвет фона для парaметров списка GE */
+
+/* все для закраски */
+//OBJECT **menu_2;/* указатель на меню_2 */
+
+/* все для линии */
+//OBJECT **menu_3;/* указатель на меню_3 */
+
+/* работа с файлами */
+//OBJECT **menu_4;/* указатель на меню_4 */
+
+/* индикация выполнения */
+OBJECT **menu_5;/* указатель на меню_5 */
+
+/* меню сообщений оперативной подсказки */
+OBJECT **menu_mess;
+
+/* меню 6 */
+//OBJECT **menu_6;
+
+/* меню 7 */
+//OBJECT **menu_7;
+
+/* меню 8 */
+//OBJECT **menu_8;
+
+/* меню 9 */
+//OBJECT **menu_9;
+
+/* меню 10 */
+//OBJECT **menu_10;
+
+
+int mn1_show=ON;/* признак необходимости вывода  меню */
+int mn1_out=OFF;/* OFF-выводится 1-й раз,ON не 1-й */
+
+/* определения для меню =конец= */
+
+// qqq
+WINDOW win; /* данные окна редактора */
+/*
+int xa_min,ya_min;   // координаты окна -абсолют-
+int size_xya=SIZE_XY;// размер стороны окна -абсолют-
+*/
+char kf_size=51;     // код размера окна (1-51)
+//double Kx,Ky;      // коэффициенты масштабирования окна
+
+// коэффиценты для вычисления размера масштабируемого текста
+//======== size   0   1   2   3   4   5   6   7   8  9   10
+char multx[11]={  4,  5,  6,  7, 10, 13, 16, 20, 25, 30, 40};
+char multy[11]={  5,  6,  7,  8, 10, 13, 17, 20, 25, 30, 40};
+//char divx [11]={ 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+//char divy [11]={ 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+unsigned char Multx;// текущий масштаб X
+unsigned char Multy;// текущий масштаб Y
+//char mode_text=mode_text_noficx;//режим масштаба текста
+char mode_text=mode_text_ficx;//режим масштаба текста
+
+unsigned int markers[][32]={
+{// Hand
+   0xFFFF,
+   0xCFFF,
+   0x87FF,
+   0x87FF,
+   0x81FF,
+   0x80FF,
+   0x803F,
+   0x8607,
+   0x8003,
+   0x8003,
+   0x8003,
+   0x8003,
+   0xC007,
+   0xE007,
+   0xF007,
+   0xF80F,
+   0x0000,
+   0x0000,
+   0x3000,
+   0x3000,
+   0x3000,
+   0x3600,
+   0x3600,
+   0x36C0,
+   0x36D8,
+   0x37F8,
+   0x3FF8,
+   0x1DB8,
+   0x1FF0,
+   0x0FF0,
+   0x07F0,
+   0x0000
+},
+{ // Arrow_tbg
+   0xBFFF,
+   0x9FFF,
+   0xC7FF,
+   0xC3FF,
+   0xE0FF,
+   0xE07F,
+   0xF01F,
+   0xF00F,
+   0xF803,
+   0xF801,
+   0xFC07,
+   0xFC03,
+   0xFE01,
+   0xFE60,
+   0xFFF1,
+   0xFFFF,
+   0x0000,
+   0x4000,
+   0x2000,
+   0x3800,
+   0x1C00,
+   0x1F00,
+   0x0F80,
+   0x0FE0,
+   0x07F0,
+   0x07FC,
+   0x03F0,
+   0x03F8,
+   0x01BC,
+   0x011E,
+   0x0008,
+   0x0000
+},
+{ // Cross
+   0xFC7F,
+   0xFC7F,
+   0xFC7F,
+   0xFC7F,
+   0xFC7F,
+   0xFABF,
+   0x07C1,
+   0x0381,
+   0x07C1,
+   0xFABF,
+   0xFC7F,
+   0xFC7F,
+   0xFC7F,
+   0xFC7F,
+   0xFC7F,
+   0xFFFF,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0000,
+   0xFD7E,
+   0x0000,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0100,
+   0x0000
+ }
+};/* markers[][32] */
+
+
+int  x_strt,y_strt,x_end,y_end;/* рамка выбора */
+int  rx_min,ry_min,rx_max,ry_max;/* рамка выбора */
+//координаты рамки для сохранения .PCX
+int  xmin_pcx,xmax_pcx,ymin_pcx,ymax_pcx;
+
+int  ente;/* число нажатий enter для рамки выбора */
+
+int  ind_select=OFF;/* есть выбранные рамкой элементы */
+int  count_select=-1;/* сколько элементов выбpано */
+
+//--------- Copyright ---------------------
+FIELD m_cpr=
+      { f_info,        // тип поля
+        0,             // размер данных
+        0,             // номер активной строки
+        NULL,          // начало данных
+        1,             // номер обьекта в файле TBG
+        NO_SHOW_FLD,   // признак наличия индикации выбора позиции
+        NO_SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL           // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_r[]={&m_cpr}; // описание полей панели
+
+PANEL pn_mr=
+      { "tbg_mna.tbg",           // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        1,                       // число полей
+        1,                       // номер активного поля
+        m_r,                     // начало описания полей
+        NULL
+      };// панель Copyright
+
+
+// режимы
+//--------- режим сохранения ---------------------
+FIELD m_save=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_save)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_save,                     // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_s[]={&m_save}; // описание полей панели
+
+PANEL pn_ms=
+      { "tbg_mns.tbg",           // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_s)/sizeof(*m_s),// число полей
+        1,                       // номер активного поля
+        m_s,                     // начало описания полей
+        NULL
+      };// панель режимов сохранения
+//---------- режим загрузки  ---------------------
+FIELD m_load=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_load)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_load,                     // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_l[]={&m_load}; // описание полей панели
+
+PANEL pn_ml=
+      { "tbg_mnl.tbg",           // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_l)/sizeof(*m_l),// число полей
+        1,                       // номер активного поля
+        m_l,                     // начало описания полей
+        NULL
+      };// панель режимов загрузки
+//---------- режим удаления  ---------------------
+FIELD m_del=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_del)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_del,                     // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_d[]={&m_del}; // описание полей панели
+
+PANEL pn_md=
+      { "tbg_mn12.tbg",           // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_d)/sizeof(*m_d),// число полей
+        1,                       // номер активного поля
+        m_d,                     // начало описания полей
+        NULL
+      };// панель режимов удаления
+
+//---------- режим копирования  ---------------------
+FIELD m_copy=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_copy)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_copy,                     // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_c[]={&m_copy}; // описание полей панели
+
+PANEL pn_mc=
+      { "tbg_mn14.tbg",          // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_c)/sizeof(*m_c),// число полей
+        1,                       // номер активного поля
+        m_c,                     // начало описания полей
+        NULL
+      };// панель режимов копирования
+//---------- режим сдвига ---------------------
+FIELD m_move=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_move)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_move,                     // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_m[]={&m_move}; // описание полей панели
+
+PANEL pn_mm=
+      { "tbg_mn15.tbg",          // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_m)/sizeof(*m_m),// число полей
+        1,                       // номер активного поля
+        m_m,                     // начало описания полей
+        NULL
+      };// панель режимов сдвига
+
+//---------- режим перевывода ---------------------
+FIELD m_show=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_show)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_show,                 // начало данных
+        1,                               // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_h[]={&m_show}; // описание полей панели
+
+PANEL pn_mh=
+      { "tbg_mn9.tbg",          // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_h)/sizeof(*m_h),// число полей
+        1,                       // номер активного поля
+        m_h,                     // начало описания полей
+        NULL
+      };// панель режимов перевывода
+
+//---------- режим индикации ---------------------
+FIELD m_indic=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_indic)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_indic,                 // начало данных
+        1,                               // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD m_grid=
+      { f_poli,                         // тип поля
+        sizeof(pck.Mode_grid)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        pck.Mode_grid,                  // начало данных
+        5,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+
+FIELD *m_i[]={&m_indic,&m_grid}; // описание полей панели
+
+PANEL pn_mi=
+      { "tbg_mn13.tbg",          // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_i)/sizeof(*m_i),// число полей
+        1,                       // номер активного поля
+        m_i,                     // начало описания полей
+        NULL
+      };// панель режимов индикации
+
+//---------- выбор стиля шрифта ---------------------
+FIELD m_fnt_t=
+      { f_mono,                        // тип поля
+        sizeof(pck.fnt_t)/sizeof(CHAR), // размер данных
+        0,                             // номер активной строки
+        &pck.fnt_t,                    // начало данных
+        1,                             // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        NO_SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_f_t[]={&m_fnt_t}; // описание полей панели
+
+PANEL pn_mf_t=
+      { "tbg_mn10.tbg",          // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_f_t)/sizeof(*m_f_t), // число полей
+        1,                       // номер активного поля
+        m_f_t,                   // начало описания полей
+        NULL
+      };// панель выборa стиля шрифта
+
+//---------- выбор выравнивания шрифта ---------------------
+FIELD m_ver_t=
+      { f_mono,                        // тип поля
+        sizeof(pck.ver_t)/sizeof(CHAR), // размер данных
+        0,                             // номер активной строки
+        &pck.ver_t,                    // начало данных
+        1,                             // номер обьекта в файле TBG
+        SHOW_FLD,    // признак наличия индикации выбора позиции
+        SHOW_FLD,    // признак наличия индикации указания позиции
+        (void(*)(OBJECT**,...))indic_vira_t // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD m_hor_t=
+      { f_mono,                        // тип поля
+        sizeof(pck.hor_t)/sizeof(CHAR), // размер данных
+        0,                             // номер активной строки
+        &pck.hor_t,                    // начало данных
+        5,                             // номер обьекта в файле TBG
+        SHOW_FLD,    // признак наличия индикации выбора позиции
+        SHOW_FLD,    // признак наличия индикации указания позиции
+        (void(*)(OBJECT**,...))indic_vira_t // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_v_t[]={&m_ver_t,&m_hor_t}; // описание полей панели
+
+PANEL pn_v_t=
+      { "tbg_mn23.tbg",          // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_v_t)/sizeof(*m_v_t), // число полей
+        1,                       // номер активного поля
+        m_v_t,                   // начало описания полей
+        indic_vira_t
+      };// панель выборa выравнивания шрифта
+
+//---------- режимы корректуры ---------------------
+FIELD m_korr_lre=
+      { f_poli,                         // тип поля
+        sizeof(pck.Mode_korr_lre)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        pck.Mode_korr_lre,                 // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD m_korr_bzf=
+      { f_poli,                         // тип поля
+        sizeof(pck.Mode_korr_bzf)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        pck.Mode_korr_bzf,                 // начало данных
+        5,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD m_korr_t=
+      { f_poli,                         // тип поля
+        sizeof(pck.Mode_korr_t)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        pck.Mode_korr_t,                 // начало данных
+        10,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+
+FIELD *m_k[]={&m_korr_lre,&m_korr_bzf,&m_korr_t}; // описание полей панели
+
+PANEL pn_mk=
+      { "tbg_mn6.tbg",            // имя файла TBG
+        "tbg_col.tbg",            // имя файла цветов TBG
+        sizeof(m_k)/sizeof(*m_k), // число полей
+        1,                        // номер активного поля
+        m_k,                      // начало описания полей
+        NULL
+      };// панель режимов корректуры
+
+//---------- выбор стиля и цвета закраски ---------------------
+FIELD m_stl_f=
+      { f_mono,                         // тип поля
+        sizeof(pck.stl_f)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.stl_f,                 // начало данных
+        5,                              // номер обьекта в файле TBG
+        NO_SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,      // признак наличия индикации указания позиции
+        (void(*)(OBJECT**,...))indic_stl_f    // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD m_col_f=
+      { f_mono,                         // тип поля
+        sizeof(pck.col_f)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.col_f,                     // начало данных
+        1,                              // номер обьекта в файле TBG
+        NO_SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,      // признак наличия индикации указания позиции
+        (void(*)(OBJECT**,...))indic_col_f    // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_f[]={&m_stl_f,&m_col_f}; // описание полей панели
+
+void init_stl_f(OBJECT **menu);
+
+PANEL pn_fst=
+      { "tbg_m125.tbg",           // имя файла TBG
+        "tbg_col.tbg",            // имя файла цветов TBG
+        sizeof(m_f)/sizeof(*m_f), // число полей
+        1,                        // номер активного поля
+        m_f,                      // начало описания полей
+        init_stl_f
+      };// панель выборa стиля и цвета закраски
+
+//---------- выбор стиля и цвета линии ---------------------
+FIELD m_stl_thi=
+      { f_mono,                           // тип поля
+        sizeof(pck.stl_thi)/sizeof(CHAR), // размер данных
+        2,                                // номер активной строки
+        &pck.stl_thi,                     // начало данных
+        1,                                // номер обьекта в файле TBG
+        NO_SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,      // признак наличия индикации указания позиции
+        (void(*)(OBJECT**,...))indic_stl_l    // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD m_col_lt=
+      { f_mono,                          // тип поля
+        sizeof(pck.col_lt)/sizeof(CHAR), // размер данных
+        2,                               // номер активной строки
+        &pck.col_lt,                     // начало данных
+        5,                               // номер обьекта в файле TBG
+        NO_SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,      // признак наличия индикации указания позиции
+        (void(*)(OBJECT**,...))indic_col_lt   // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_lst[]={&m_stl_thi,&m_col_lt}; // описание полей панели
+
+void init_stl_lt(OBJECT **menu);
+
+PANEL pn_lst=
+      { "tbg_m135.tbg",               // имя файла TBG
+        "tbg_col.tbg",                // имя файла цветов TBG
+        sizeof(m_lst)/sizeof(*m_lst), // число полей
+        1,                            // номер активного поля
+        m_lst,                        // начало описания полей
+        init_stl_lt
+      };// панель выборa стиля и цвета линии
+
+//---------- режим выхода ---------------------
+FIELD m_exit=
+      { f_mono,                         // тип поля
+        sizeof(pck.Mode_exit)/sizeof(CHAR), // размер данных
+        0,                              // номер активной строки
+        &pck.Mode_exit,                 // начало данных
+        1,                              // номер обьекта в файле TBG
+        SHOW_FLD,   // признак наличия индикации выбора позиции
+        SHOW_FLD,   // признак наличия индикации указания позиции
+        NULL        // функция выполняющаяся при выборе позиции
+      };// описание поля
+
+FIELD *m_e[]={&m_exit}; // описание полей панели
+
+PANEL pn_me=
+      { "tbg_mnw.tbg",           // имя файла TBG
+        "tbg_col.tbg",           // имя файла цветов TBG
+        sizeof(m_e)/sizeof(*m_e),// число полей
+        1,                       // номер активного поля
+        m_e,                     // начало описания полей
+        NULL
+      };// панель режимов выхода
+
+// выполнение команд рисования
+int xkom_strt=100,ykom_strt=100,xkom_end=200,ykom_end=200;
+int ente1;
+int ente_fld;
+int ente_bkgr;
+
+int max_obj=4000;
+
+char cnt[]={"krt"};
+char lab[]={"TBG 6.00 \"TurBoGraphica\"  (C) Павельев П.И. 1991-96 /18 апреля  1996 г./\n"
+            "TBG 6.02 \"TurBoGraphica\"  (C) Чумак    А.И. 1992-00 /25    jun  2000 г./"};
+int xs=650,ys=360;
+int oper[38];    /*место для курсора*/
+int ind_move=0;
+
+int size_str,i,x_min,x_max,y_min,y_max;
+double mx; /* коэфф. масштабирования */
+
+int komand=0;/*код команды*/
+
+int pos=2;/* номер корректируемого параметра */
+int korr_txt=0;/* необходимость корректуры текста:0-не нужно;1-нужно */
+
+char text[SZ_text];
+char s2[]={".tbg"};
+
+char curr_file_name[80]={"c:\\demo.tbg"};
+
+//=====================
+OBJECT **FonTbg=NULL;// картинка фона TBG
+
+LIST pic=max_obj;/* основная картинка */
+
+char *ARGV;//указатель на строку доступа ко всем файлам редактора
+
+extern char demomess[];
+
+char old_ig_mode; // режим в котором была инициалицирована графика
+
+void main(int argc,char **argv)
+{
+  FILE *fp;
+  char s[90];
+  char f1[] = {"tbgv6.pck"};
+  CHAR StartFirst = ON;
+
+  harderr((int (*)(int,int,int,int))handler);// обработчик ошибок "железа" 3.0 ?
+//  harderr((int (*)())handler);// обработчик ошибок "железа" 2.0 ?
+/*  sprintf(s,"%s %s",lab,demo);*/
+
+  printf("\n%s",lab);
+  if(strlen(demomess)!=0){
+   printf("\nЭто %s",demomess);
+   getch();/* Это ДемоВерсия */
+  }/* if */
+
+//  show(wherey()-1);
+//  printf("\n");
+
+
+/* выделяем путь без имени */
+argc++;
+
+//*strrchr(*argv,'\\')='\0';
+// удаляем имя из строки пути с именем программы
+char *ptrh;
+ptrh=strrchr(*argv,'\\');
+
+if(ptrh == 0) *argv=0;
+else *ptrh=0;
+
+ARGV=*argv;// полный путь к задаче;для текущего 0;
+
+// ввод из файла
+if((fp=fopen(f1,"rb")) != NULL)
+{ /* есть файл */
+ fread(&pck,sizeof(pck),1,fp);
+ pck.MaxSizeKodMacro=sizeof(pck.KodMacro)/sizeof(int);
+ fclose(fp);
+} /* есть файл */
+else getcwd(pck.div_path,MAXPATH);// нет файла - текущий каталог
+
+if(pck.mc_index == 0)
+   pck.mc_index = 1;
+if(pck.mc_state == 0)
+   pck.mc_state = 4;
+
+//sprintf(s,"%s\\",*argv);/* путь к файлам BGI,CHR */
+mouse_yes=ON;/* Выбрана мышь */
+
+
+
+//long tim=biostime(0,0L);
+
+char t[]="tbg.tbl";
+
+// доступ к библиотеке TBL
+if(ARGV == 0) sprintf(s,"%s",t);
+  else sprintf(s,"%s\\%s",ARGV,t);
+
+mperr = fopen("tbgerr.txt", "w");
+
+set_tbl(s);
+
+if(load_file(&menu_1,"tbg_m115.tbg") < 0) return;
+
+if(load_file(&menu_5,"tbg_m155.tbg") < 0) return;
+
+if(load_file(&menu_mess,"tbg_mes5.tbg") < 0) return;
+
+//printf("\n Time load = %ld",(biostime(0,0L)-tim));
+//getch();
+
+ /* фактические цвета берем */
+ col_fon1_mn1=getcolor_obj_num(menu_1,255,1);/* цвет фона для текста подсказок */
+ col_fon2_mn1=getcolor_obj_num(menu_1,2,15);/* цвет фона для заданного элемента */
+ col_fon3_mn1=getcolor_obj_num(menu_1,2,21);/* цвет фона для текущих значений элемента */
+ col_fon4_mn1=getcolor_obj_num(menu_1,2,25);/* цвет фона для парaметров списка LE */
+ col_fon5_mn1=getcolor_obj_num(menu_1,2,26);/* цвет фона для парaметров списка GE */
+
+// sprintf(pck.Fn_work_tbg,"%s",name);//запоминаем имя файла
+
+/*
+// Перехватить Ctrl-Break
+	asm cli;
+	old_break =getvect(0x1b);
+	setvect(0x1b,new_break );
+	asm sti;
+*/
+#ifndef DOSX286
+ registerbgifont(triplex_font);
+ registerfarbgifont(simplex_font_far);
+#endif
+
+do
+{
+
+ detectgraph(&GraphDriver, &GraphMode);
+
+ // для EGA режим наибольший допустимый
+ if(GraphDriver == EGA) if(pck.ig_mode > 4) pck.ig_mode = 4;
+
+ if(pck.ig_mode==1) {GraphDriver=CGA;GraphMode=CGAC0;pcxtype=pcxCGA_4;}// if
+ if(pck.ig_mode==2) {GraphDriver=CGA;GraphMode=CGAHI;pcxtype=pcxCGA_6;}// if
+ if(pck.ig_mode==3) {GraphDriver=EGA;GraphMode=EGALO;pcxtype=pcxEGA_E;}// if
+ if(pck.ig_mode==4) {GraphDriver=EGA;GraphMode=EGAHI;pcxtype=pcxEGA_10;}// if
+ if(pck.ig_mode==5) {GraphDriver=VGA;GraphMode=VGAHI;pcxtype=pcxVGA_12;}// if
+ if(pck.ig_mode==6) {
+#ifndef DOSX286
+    installuserdriver("SVGA256", DetectVESA);
+#endif
+    GraphDriver = DETECT;
+    pcxtype=pcxVGA_13;
+ }// if
+ if(pck.ig_mode==max_ig_mode) {GraphDriver=DETECT;}// if
+
+// путь к файлам BGI,CHR
+if(ARGV == 0) sprintf(s,"%s","");
+  else        sprintf(s,"%s\\",ARGV);
+
+// sprintf(s,"%s\\",*argv);/* путь к файлам BGI,CHR */
+
+ initgraph(&GraphDriver, &GraphMode,s);
+
+// gprintf("GraphDriver:%d, GraphMode:%d\n", GraphDriver, GraphMode);
+// getch();
+
+
+ MPCSetPath(ARGV);
+
+
+ if(pck.ig_mode==max_ig_mode) { //DETECT
+   // выбор режима PCX
+   if( (GraphDriver==1  ) && (GraphMode==0) ) pcxtype=pcxCGA_4;
+   if( (GraphDriver==1  ) && (GraphMode==4) ) pcxtype=pcxCGA_6;
+   if( (GraphDriver==3  ) && (GraphMode==0) ) pcxtype=pcxEGA_E;
+   if( (GraphDriver==3  ) && (GraphMode==1) ) pcxtype=pcxEGA_10;
+   if( (GraphDriver==9  ) && (GraphMode==2) ) pcxtype=pcxVGA_12;
+   if( (GraphDriver==134) && (GraphMode==0) ) pcxtype=pcxVGA_13;
+ } // if DETECT
+
+
+ mouse_ini();/*  инициализация мыши */
+
+ mouse_mask((unsigned short int*)(markers[ARROW]),0,0);
+
+ mouse_mode = ABSENT;
+
+ if(GraphDriver > 10){
+
+ // SVGA 640x480x256 OK!
+
+ // перестроить палитру и т.д. и т.п.
+
+ // ввести свой курсор мыши
+
+    mouse_mode = MOUSE_ON;
+/*
+    while(1){
+       mouse_draw();
+       if(kbhit()){
+          switch(getch()){
+             case '1':// on
+                mouse_on();
+                break;
+             case '2':// off
+                mouse_off();
+                break;
+             case '0':
+                goto ext;
+                break;
+          }/* switch */
+       }/* if */
+    }/* while */
+    ext:;
+*/
+ }/* if */
+
+
+ asm{
+   mov ax,000fh;
+   mov cx,4h;
+   mov dx,7h;
+   int 33h;
+ }//asm
+
+ pcxSetDisplay(pcxtype);// режим вывода PCX
+ setpalette_tbg();//установка "улучшеной" палитры
+
+ old_ig_mode=pck.ig_mode;
+ pck.ig_mode=0;
+
+ // параметры масштабирования
+ win.xa_min = win.ya_min = 0;
+ win.size_xya = SIZE_XY;
+ //рамка для сохранения PCX
+ xmin_pcx=ymin_pcx=0;
+ MaxX=xmax_pcx=getmaxx();
+ MaxY=ymax_pcx=getmaxy();
+
+ if(StartFirst == ON) { // старт первый
+    StartFirst = OFF;
+    if(pck.Fn_work_tbg[0] != 0)
+    {
+       FILE *f;
+       f = fopen(pck.Fn_work_tbg,"rb");
+       if(f != NULL)
+       {/* есть файл для загрузки */
+        fclose(f);
+        pic.LoadFile(pck.Fn_work_tbg);// загрузка изображения из файла
+        SaveTest=OFF;// признак необходимости сохранения
+        /* есть файл для загрузки */
+       }/* if */
+       else{pck.Fn_work_tbg[0] = 0;}/* elif */
+
+
+    }// if
+ }// if
+/*
+ {
+  OBJECT **p;
+  unsigned char max;
+  load_file(&p,"tbg_mnw.tbg");
+  getmax_obj(p,1,&max);
+  printf("\n[%d]",max);
+  del_pic(&p);
+  getch();
+ }
+*/
+
+ pck.ig_mode=painter();// вся работа
+
+ pos_ms_pred=-1;//перевывод сообщения в меню
+
+ closegraph();
+}
+while(pck.ig_mode!=NORESTART);
+
+/*
+ // восстановить Ctrl-Break.
+	asm cli;
+	setvect(0x1b,old_break );
+	asm sti;
+*/
+
+ pck.ig_mode=old_ig_mode;// режим инициализации графики
+ if(pck.mc_index == 0)
+    pck.mc_index = 1;
+ if(pck.mc_state == 0)
+    pck.mc_state = 4;
+//сохранение режимов и параметров
+if((fp=fopen(f1,"wb")) != NULL)
+{ /* есть файл */
+ fwrite(&pck,sizeof(pck),1,fp);
+ fclose(fp);
+} /* есть файл */
+
+fclose(mperr);
+
+closegraph();
+
+} // main
+
+/****************************************************************************/
+void ibell(void)
+{ printf("\007");}
+/****************************************************************************/
+/*
+int KY(int y)
+{
+return((int) ((double)y* (double)getmaxy() /349. ));
+}
+*/
+/****************************************************************************/
+int mmx(int x)
+{
+ return (int) ((double)win.xa_min+(double)x/((double)MaxX / (double)win.size_xya));
+}
+/****************************************************************************/
+int mmy(int y)
+{
+ return (int) ((double)win.ya_min+(double)y/((double)MaxY / (double)win.size_xya));
+}
+
+/***************************************************************************/
+int DMx(long x)
+{
+ long tmp,t;
+
+ t = x-(long)win.xa_min;
+ tmp= (0.5 + ((double)labs(t)*((double)MaxX / (double)win.size_xya)));
+
+ if(t< 0L) return -(int)tmp;
+   else    return  (int)tmp;
+}//DMx
+/***************************************************************************/
+int DMy(long y)
+{
+ long tmp,t;
+
+ t = y-(long)win.ya_min;
+ tmp= (0.5 + ((double)labs(t)*((double)MaxY / (double)win.size_xya)));
+
+ if(t< 0L) return -(int)tmp;
+   else    return  (int)tmp;
+}//DMy
+/***************************************************************************/
+void set_attrib(void)
+{
+ settextstyle(pck.fnt_t,pck.dir_t,pck.siz_t);
+ if(graphresult()!=0)
+   {
+    pck.fnt_t=DEFAULT_FONT;
+   };/* if */
+
+
+ setlinestyle(pck.stl_l,0,pck.thi_l);
+ setfillstyle(pck.stl_f,pck.col_f);
+
+ settextjustify(pck.hor_t,pck.ver_t);
+ setcolor(pck.col_lt);
+
+ if(mode_text == mode_text_ficx)
+ {
+  Multx=multx[pck.siz_t];
+  Multy=multy[pck.siz_t];
+ }//if
+
+} /* set_attrib */
+/****************************************************************************/
+/*
+void interrupt new_break(...)
+/* INT 1B - Ctrl-Break */
+{
+/*
+ sound(1200); delay(100);
+ sound(700);  delay(100);
+ nosound();
+*/
+}/* End new Ctrl-Break */
+/****************************************************************************/
+*/
+#ifdef DOSX286
+int heapchecknode(void* p){
+   return p != NULL ? _USEDENTRY : _FREEENTRY;
+}// heapchecknode
+
+int heapcheck(void){
+   return _HEAPOK;
+}// heapchecknode
+#endif

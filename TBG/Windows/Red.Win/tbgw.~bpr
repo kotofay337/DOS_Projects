@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="tbgw.exe"/>
+    <OBJFILES value="TBG_Edit_001.obj tbgw_Main.obj Screen.obj ToolBar.obj PropDlg1.obj 
+      TextBGI_unt.obj CorrectForm_unt.obj SelectBGIFontsForm.obj About_frm.obj 
+      MacroSelect_frm.obj LoadPreview.obj ZoomScreen_frm.obj tbg_global_data.obj 
+      Affine.obj ..\TBGW.SDK\Src\librarian.obj ..\TBGW.SDK\Src\WorkPlace.obj 
+      ..\TBGW.SDK\Src\CoordSpace.obj ..\TBGW.SDK\Src\ColorEx.obj 
+      ..\TBGW.SDK\Src\Pointf.obj ..\TBGW.SDK\Src\Logic.obj 
+      ..\TBGW.SDK\Src\tbg_000.obj ..\TBGW.SDK\Src\tbg_001.obj 
+      ..\TBGW.SDK\Src\tbg_002.obj ..\TBGW.SDK\Src\tbg_003.obj 
+      ..\TBGW.SDK\Src\tbg_004.obj ..\TBGW.SDK\Src\tbg_005.obj 
+      ..\TBGW.SDK\Src\tbg_006.obj ..\TBGW.SDK\Src\tbg_007.obj 
+      ..\TBGW.SDK\Src\tbg_008.obj ..\TBGW.SDK\Src\tbg_009.obj 
+      ..\TBGW.SDK\Src\tbg_011.obj ..\TBGW.SDK\Src\tbg_012.obj 
+      ..\TBGW.SDK\Src\tbg_013.obj ..\TBGW.SDK\Src\tbg_014.obj 
+      ..\TBGW.SDK\Src\tbg_015.obj ..\TBGW.SDK\Src\tbg_converts.obj 
+      ..\TBGW.SDK\Src\WuAALn.obj ..\TBGW.SDK\Src\Parser.obj"/>
+    <RESFILES value="tbgw.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) Screen.dfm ToolBar.dfm PropDlg1.dfm TextBGI_unt.dfm 
+      CorrectForm_unt.dfm SelectBGIFontsForm.dfm About_frm.dfm 
+      MacroSelect_frm.dfm LoadPreview.dfm ZoomScreen_frm.dfm"/>
+    <LIBFILES value="..\GdiPlus\Gdiplus.lib ..\..\DOS\TBG.SDK\LIB\tbg_tcw.lib &quot;C:\Program Files (x86)\Borland\CBuilder6\Lib\Psdk\msimg32.lib&quot;"/>
+    <LIBRARIES value="vclx.lib bcbsmp.lib vcl.lib rtl.lib"/>
+    <SPARELIBS value="rtl.lib vcl.lib bcbsmp.lib vclx.lib"/>
+    <PACKAGES value="bcb2kaxserver.bpi rtl.bpi vcl.bpi vclx.bpi proide50.bpi vclie.bpi 
+      bcbie.bpi bcbsmp.bpi crbide50.bpi dsnap.bpi inet.bpi inetdb.bpi dbrtl.bpi 
+      vcldb.bpi bdertl.bpi vcldbx.bpi adortl.bpi dss.bpi teeui.bpi teedb.bpi 
+      tee.bpi ibxpress.bpi nmfast.bpi dclocx.bpi qrpt.bpi teeqr.bpi webdsnap.bpi 
+      direct50.bpi stride50.bpi"/>
+    <PATHCPP value=".;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src;..\TBGW.SDK\Src"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_EDITOR_"/>
+    <SYSDEFINES value="NO_STRICT"/>
+    <MAINSOURCE value="tbgw.bpf"/>
+    <INCLUDEPATH value="..\TBGW.SDK\Src;..\TBGW.SDK\Include;..\..\DOS\TBG.SDK\INCLUDE;..\GdiPlus;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\TBGW.SDK\Src;&quot;E:\Program Files\Borland\CBuilder6\Projects&quot;;..\..\DOS\TBG.SDK\LIB;..\TBGW.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-wuse -wstv -wstu -wsig -w-pck -w-par -w-8027 -w-8026 -w-dup -wdef -wcln 
+      -wbbf -wasm"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I..\TBGW.SDK\Src -I..\TBGW.SDK\Include -I..\..\DOS\TBG.SDK\INCLUDE 
+      -I..\GdiPlus -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp 
+      -D_EDITOR_"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -Tkh30000 -C -fp -ff -X- -a1 -5 -b 
+      -k- -vi -tWC -tWM -c"/>
+    <PFLAGS value="-$Y- -$L- -$D- -$A8 -v -JPHN -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-D&quot;&quot; -ap -Tpe -x -w-rty"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0x32.obj sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="..\GdiPlus\Gdiplus.lib" FORMNAME="" UNITNAME="Gdiplus.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\DOS\TBG.SDK\LIB\tbg_tcw.lib" FORMNAME="" UNITNAME="tbg_tcw.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="tbgw.bpf" FORMNAME="" UNITNAME="tbgw" CONTAINERID="BPF" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="tbgw.res" FORMNAME="" UNITNAME="tbgw" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="TBG_Edit_001.cpp" FORMNAME="" UNITNAME="TBG_Edit_001" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="tbgw_Main.cpp" FORMNAME="" UNITNAME="tbgw_Main" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Screen.cpp" FORMNAME="Painter" UNITNAME="Screen" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ToolBar.cpp" FORMNAME="SpeedBar" UNITNAME="ToolBar" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="PropDlg1.cpp" FORMNAME="PropDlg" UNITNAME="PropDlg1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="TextBGI_unt.cpp" FORMNAME="TextBGI" UNITNAME="TextBGI_unt" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="CorrectForm_unt.cpp" FORMNAME="CorrectForm" UNITNAME="CorrectForm_unt" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="SelectBGIFontsForm.cpp" FORMNAME="SelectBGI" UNITNAME="SelectBGIFontsForm" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="About_frm.cpp" FORMNAME="About" UNITNAME="About_frm" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="MacroSelect_frm.cpp" FORMNAME="MacroSelect" UNITNAME="MacroSelect_frm" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="LoadPreview.cpp" FORMNAME="LoadPreview_frm" UNITNAME="LoadPreview" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ZoomScreen_frm.cpp" FORMNAME="ZoomScreen" UNITNAME="ZoomScreen_frm" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="tbg_global_data.cpp" FORMNAME="" UNITNAME="tbg_global_data" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Affine.cpp" FORMNAME="" UNITNAME="Affine" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\librarian.cpp" FORMNAME="" UNITNAME="librarian.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\WorkPlace.cpp" FORMNAME="" UNITNAME="WorkPlace" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\CoordSpace.cpp" FORMNAME="" UNITNAME="CoordSpace" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\ColorEx.cpp" FORMNAME="" UNITNAME="ColorEx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\Pointf.cpp" FORMNAME="" UNITNAME="Pointf" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\Logic.cpp" FORMNAME="" UNITNAME="Logic" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_000.cpp" FORMNAME="" UNITNAME="tbg_000" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_001.cpp" FORMNAME="" UNITNAME="tbg_001.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_002.cpp" FORMNAME="" UNITNAME="tbg_002.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_003.cpp" FORMNAME="" UNITNAME="tbg_003.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_004.cpp" FORMNAME="" UNITNAME="tbg_004.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_005.cpp" FORMNAME="" UNITNAME="tbg_005.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_006.cpp" FORMNAME="" UNITNAME="tbg_006.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_007.cpp" FORMNAME="" UNITNAME="tbg_007.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_008.cpp" FORMNAME="" UNITNAME="tbg_008.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_009.cpp" FORMNAME="" UNITNAME="tbg_009.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_011.cpp" FORMNAME="" UNITNAME="tbg_011.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_012.cpp" FORMNAME="" UNITNAME="tbg_012.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_013.cpp" FORMNAME="" UNITNAME="tbg_013.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_014.cpp" FORMNAME="" UNITNAME="tbg_014" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_015.cpp" FORMNAME="" UNITNAME="tbg_015" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\tbg_converts.cpp" FORMNAME="" UNITNAME="tbg_converts.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\WuAALn.cpp" FORMNAME="" UNITNAME="WuAALn.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\TBGW.SDK\Src\Parser.cpp" FORMNAME="" UNITNAME="PARSER" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Program Files (x86)\Borland\CBuilder6\Lib\Psdk\msimg32.lib" FORMNAME="" UNITNAME="msimg32.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=1
+Build=3
+Debug=0
+PreRelease=1
+Special=0
+Private=0
+DLL=0
+Locale=1049
+CodePage=1251
+
+[Version Info Keys]
+CompanyName=(c) KTO Software 1989 - 2002
+FileDescription=Редактор файлов TBG для Windows
+FileVersion=1.0.1.3
+InternalName=TBG
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=tbgw.exe
+ProductName=
+ProductVersion=7.0
+Comments=WARNING! Illegal use outside 09686...
+
+[HistoryLists\hlIncludePath]
+Count=19
+Item0=..\TBGW.SDK\Src;..\TBGW.SDK\Include;..\..\DOS\TBG.SDK\INCLUDE;..\GdiPlus;$(BCB)\include;$(BCB)\include\vcl
+Item1=..\TBGW.SDK\Src;..\TBGW.SDK\Include;..\..\DOS\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl;..\GdiPlus
+Item2=..\TBGW.SDK\Src;..\TBGW.SDK\Include;..\..\DOS\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item3=..\TBGW.SDK\Src;..\TBGW.SDK\Include;..\..\..\DOS\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl;..\GdiPlus
+Item4=..\TBGW.SDK\Src;TBGW.SDK\Src;..\TBGW.SDK\Include;E:\Home\Alex\TBG\DOS\TBG.SDK\INCLUDE;.;E:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl;E:\Home\Alex\TBG\Windows\GdiPlus
+Item5=..\TBGW.SDK\Src;TBGW.SDK\Src;..\TBGW.SDK\Include;E:\Home\Alex\TBG\DOS\TBG.SDK\INCLUDE;.;E:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+Item6=..\TBGW.SDK\Include;E:\Home\Alex\TBG\DOS\TBG.SDK\INCLUDE;.;E:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+Item7=TBGW.SDK\Src;Tests\TBGW;..\TBGW.SDK\Include;.;E:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+Item8=..\TBGW.SDK\Include;.;E:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+Item9=Tests\TBGW;E:\Program Files\Borland\CBuilder6\Projects;C:\Program Files\Borland\CBuilder5\Projects;TBGW.SDK\Src;..\TBG.SDK\INCLUDE;TBGW.SDK\Include;$(BCB)\include;$(BCB)\include\vcl
+Item10=C:\Program Files\Borland\CBuilder5\Projects;TBGW.SDK\Src;..\TBG.SDK\INCLUDE;TBGW.SDK\Include;$(BCB)\include;$(BCB)\include\vcl
+Item11=C:\Program Files\Borland\CBuilder5\Projects\;TBGW.SDK\Src;..\TBG.SDK\INCLUDE;TBGW.SDK\Include;$(BCB)\include;$(BCB)\include\vcl
+Item12=TBGW.SDK\Src;..\TBG.SDK\INCLUDE;TBGW.SDK\Include;$(BCB)\include;$(BCB)\include\vcl
+Item13=..\TBG.SDK\INCLUDE;F:\Home\Alex\RED.WIN\TBGW.SDK\Include;$(BCB)\include;$(BCB)\include\vcl
+Item14=TBGW.SDK\Src;Smooth;..\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item15=Smooth;..\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item16=Smooth;..\TBG.SDK\INCLUDE;F:\Home\Alex\RED.WIN;$(BCB)\include;$(BCB)\include\vcl
+Item17=F:\Home\Alex\RED.WIN\Smooth;F:\Home\Alex\RED.WIN;F:\Home\Alex\TBG.SDK\INCLUDE;$(BCB)\include;$(BCB)\include\vcl
+Item18=Smooth;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=10
+Item0=..\TBGW.SDK\Src;E:\Program Files\Borland\CBuilder6\Projects;..\..\DOS\TBG.SDK\LIB;..\TBGW.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=..\TBGW.SDK\Src;TBGW.SDK\Src;Tests\TBGW;E:\Program Files\Borland\CBuilder6\Projects;..\..\DOS\TBG.SDK\LIB;..\TBGW.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item2=TBGW.SDK\Src;Tests\TBGW;E:\Program Files\Borland\CBuilder6\Projects;..\..\DOS\TBG.SDK\LIB;..\TBGW.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item3=E:\Program Files\Borland\CBuilder6\Projects;..\..\DOS\TBG.SDK\LIB;..\TBGW.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item4=Tests\TBGW;E:\Program Files\Borland\CBuilder6\Projects;C:\Program Files\Borland\CBuilder5\Projects;TBGW.SDK\Src;Smooth;..\TBG.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item5=C:\Program Files\Borland\CBuilder5\Projects;TBGW.SDK\Src;Smooth;..\TBG.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item6=C:\Program Files\Borland\CBuilder5\Projects\;TBGW.SDK\Src;Smooth;..\TBG.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item7=TBGW.SDK\Src;Smooth;..\TBG.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item8=Smooth;..\TBG.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item9=F:\Home\Alex\RED.WIN\Smooth;F:\Home\Alex\RED.WIN;F:\Home\Alex\TBG.SDK\LIB;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=4
+Item0=..\..\DOS\TBG.SDK\SRC;..\TBGW.SDK\SRC\
+Item1=F:\Home\Alex\TBG.SDK\SRC;E:\Home\Alex\TBG.SDK\SRC\
+Item2=F:\Home\Alex\TBG.SDK\SRC
+Item3=e:\program files\borland\cbuilder5\source\vcl;F:\Home\Alex\TBG.SDK\SRC
+
+[HistoryLists\hlConditionals]
+Count=4
+Item0=_EDITOR_
+Item1=_EDITOR_;_DEBUG
+Item2=_EDITOR_;;_DEBUG
+Item3=_EDITOR_;
+
+[HistoryLists\hlIntOutputDir]
+Count=3
+Item0=.\Obj
+Item1=Obj
+Item2=F:\Home\Alex\RED.WIN\Obj
+
+[HistoryLists\hlFinalOutputDir]
+Count=2
+Item0=..\..\Ready\
+Item1=..\..\Ready
+
+[Debugging]
+DebugSourceDirs=..\..\DOS\TBG.SDK\SRC;..\TBGW.SDK\SRC\
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=1
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

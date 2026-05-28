@@ -1,0 +1,2 @@
+@bcc -c -C -f287 -ml -2 -h -DDOSX286 -IE:\BC\INCLUDE -IZ:\TBG.SDK\INCLUDE -IZ:\RED\TOOLS -IZ:\RED %1
+

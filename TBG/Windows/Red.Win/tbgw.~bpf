@@ -1,0 +1,14 @@
+USEFORM("Screen.cpp", Painter);
+USEFORM("ToolBar.cpp", SpeedBar);
+USEFORM("PropDlg1.cpp", PropDlg);
+USEFORM("TextBGI_unt.cpp", TextBGI);
+USEFORM("CorrectForm_unt.cpp", CorrectForm);
+USEFORM("SelectBGIFontsForm.cpp", SelectBGI);
+USEFORM("About_frm.cpp", About);
+USEFORM("MacroSelect_frm.cpp", MacroSelect);
+USEFORM("LoadPreview.cpp", LoadPreview_frm);
+USEFORM("ZoomScreen_frm.cpp", ZoomScreen);
+//---------------------------------------------------------------------------
+This file is used by the project manager only and should be treated like the project file
+
+main

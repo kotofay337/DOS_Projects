@@ -1,0 +1,15 @@
+This is a self-extracting archive containing sources, documentation,
+and binaries for CTask version 2.2d.
+
+CTask is a Multitasking Kernel for C, which allows preemptive
+multitasking in C programs. Includes full sources for the Kernel, a
+full duplex interrupt driven serial I/O driver, a DOS access
+multiplexer, printer and keyboard interfaces. CTask programs can
+spawn other programs and go TSR. Version 2.2c fixes a number of known
+bugs. Mainly C, some ASM, for use with Turbo C or Microsoft C. 
+
+CTask is unrestricted public domain, no license, royalty, or
+registration fees must be paid for private or commercial use.
+
+You need at least 1.5 Megabytes of free disk space to unpack this
+file. Do you want to proceed? Answer Y to unpack, N to abort.

@@ -1,0 +1,12 @@
+CTask 2.2d (Thomas Wagner $0) is a set
+of routines that allow your C program to
+execute functions in parallel, without
+your having to build in sophisticated
+polling and switching schemes. CTask
+handles the switching of processor time
+with a priority based, preemptive
+schedular, and provides a fairly
+complete set of routines for intertask
+communication, event signalling, and
+task interlocking.
+

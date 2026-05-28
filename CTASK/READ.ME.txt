@@ -1,0 +1,420 @@
+CTask - A Multitasking Kernel for C.
+Version 2.2d, Released 93-06-08.
+
+Public Domain Software written by Thomas Wagner
+
+Internet:    twagner@bix.com
+BIX:         twagner
+Compuserve:  100023,2042
+
+*** NOTE: ADDRESS CHANGE! ***
+
+Business Address:
+
+        Ferrari electronic GmbH
+        Ruhlsdorfer Strasse 138
+        D-14513 Teltow
+        Germany
+
+        Phone: (49-3328) 474 626
+        Fax:   (49-3328) 438 04-0
+
+        BBS:   (49-3328) 438 04-8 (from 8/15/93)
+               please don't try to call before 8/15!
+
+Home Address:
+
+        Thomas Wagner
+        Patschkauer Weg 31
+        D-14195 Berlin
+        Germany
+
+This software is in the Public Domain. No registration is required,
+and no license fees or royalties must be paid. 
+
+You are using this software at your own risk. There is no warranty on
+fitness for any purpose, and the author can not be held liable for
+any damages whatsoever.
+
+Re-distribution by any media, disk or BBS, is expressly encouraged.
+Please distribute freely, but please leave the archives intact when
+re-posting. If there is a technical need to split up the archives,
+please include this read.me with all parts, and tell the user where
+to find the other parts. 
+
+
+Versions released so far:
+   0.1 (Beta)  88-03-01
+   1.1         88-07-01
+   1.1a        88-12-29
+   1.1b        89-05-30
+   2.0 	       89-12-24
+   2.1         90-07-23
+   2.1a        90-08-13
+   2.1b        90-08-14
+   2.2         90-10-12
+   2.2a        90-11-22
+   2.2b        91-05-28
+   2.2c        92-09-02
+   2.2d (this) 93-06-08
+   
+If you want to receive future updates, I recommend joining BIX. You
+will not only have access to the newest version of CTask, you will
+also get direct support from me through E-mail or the CTask support
+topic in the ibm.other conference. Please see the manual for
+more information on BIX, and for the complete support policy. 
+
+For those without easy access to BIX, there will be a Ferrari BBS in
+the near future. Our BBS will provide the same level of support as BIX,
+i.e. you will be able to download the most current version, and discuss
+CTask in messages and E-mail. The BBS (single line for now) is scheduled
+to be operational August 15th, 1993.
+
+Please use either BIX or our BBS whenever possible to obtain new
+versions.  Although I've offered to send update disks in the past,
+I'd like to reduce disk mailings to an absolute minimum. Mailing
+disks free is too costly for us, and payment has proven to be a
+problem (caching foreign cheques for small amounts often costs more
+in bank fees than the cheque is good for). Also, since new CTask
+releases have been sparse, it's frustrating for both me and you when
+you send in money, and don't receive anything for a long time.
+(Naturally, all those who sent money *will* receive a disk with the
+next major release once it's issued.) Our BBS will offer access at
+14.400 bps, with V.42bis and MNP5 compression, so even transatlantic
+downloads will not cost you an arm and a leg. BIX offers access at
+9600 bps direct dial, various speeds through Tymnet, and access
+through TELNET over the Internet at very moderate cost.
+
+                ----------------------------
+
+Version 2.2 was released mainly to correct a number of known bugs in
+2.1. The fixes a through d correct minor bugs, and adapt to new 
+compiler versions. CTask development will continue, but a firm date
+for a new major release can not yet be given. The new release will
+probably appear late '93, and will address at least one major problem:
+
+Version 2.2 will not work correctly with Windows 3.0 or 3.1 in
+enhanced 386 mode if CTask is installed as TSR before starting
+Windows. The reason (communication between virtual machines) is
+known, but a solution would be rather complex. I will try to solve
+this problem in the next release. CTask will work fine with Windows
+3.0/3.1 if started in a DOS-window, or if used with the real-mode
+version.
+
+                ----------------------------
+
+Version 2.2a fixes three bugs:
+
+  - Timeouts during an event wait caused an incorrect value to be 
+    returned (-3 instead of -1).
+
+  - The tsk_install_dos initialization routine clobbered register SI.
+
+  - Linking with shared code caused duplicate entry point errors, because
+    some entries were missing in the stub table. Adding the entries to
+    the table required changing them from "Localfunc" to "Globalfunc".
+
+Version 2.2b fixes several bugs, including:
+
+ - Register SI was clobbered in tsk_install_dos. This caused the
+   speedup parameter in tsk_install_main to cease working when compiled
+   with MSC 6.0 /Ox.
+
+ - An incorrect value (-3, TWATCH) was returned for timeouts on event
+   waits.
+
+ - The tsk_sprintf and tsk_vsprintf routines did not terminate the
+   resulting strings with a zero.
+
+ - If CLOCK_MSEC was enabled, two routines used an incorrect timeout.
+
+ - Function stubs for code sharing were incomplete/incorrect.
+
+ - Turbo C Huge model produced fixup errors due to an incorrect placement
+   of an "extern" directive in TSKINT17.ASM.
+
+This release also corrects a problem with Borland C++ 2.0 Huge model.
+BC++ uses a slightly different data segment structure, which has to
+be accounted for in the Assembler modules. TSK.MAC was changed, and
+you have to define BC_HUGE instead of TC_HUGE when compiling for BC++
+2.0 Huge model.
+
+Make files for BC++ Huge model are included as a sample. 
+
+Typecasts were added in several modules to allow compilation in C++
+"native" mode, which does not support some ANSI C type coercions.
+
+Version 2.2c fixes minor problems:
+
+ - The distributed TSKCONF.H was *not* configured according to the
+   defaults. I had tested some features, and then forgot to switch
+   back to the default version. The precompiled libraries included
+   wouldn't work when linked with a default configuration.
+
+ - If CLOCK_MSEC was enabled, most timeouts were not translated. The
+   tsk_timeout translation call was missing from both t_delay and 
+   the tsk_wait function.
+
+ - Borlands TASM 3.0 is incompatible with previous versions in some
+   areas. The ".BC" make files were changed to include the "M510"
+   switch instead of the old "MASM51", and the TSK.MAC file was slightly
+   modified to account for the changes.
+   
+ - Borland C++ 3.1 complains about the duplicate definitions of inportb
+   and outportb in TSK.H. Since those definitions were included only to
+   account for a problem in Turbo C++ 1.0, which probably no one still
+   uses, the definitions were disabled.
+
+Version 2.2d fixes minor problems, and adds more debug support:
+
+ - When spawning, the DOS save area was initialised when the task was first
+   scheduled in. This could lead to tasks using incorrect PSPs, depending
+   on the order of events. In 2.2d, the save area is initialised on task
+   creation.
+
+ - New debug options (in TSKDEB.H) allow tracing DOS calls, either buffered
+   or on-line.
+
+ - A new serial option allows task snapshot output through a COM-port. The
+   printf routines were expanded to support (polled) COM-port I/O. Simple
+   input routines are also provided to aid in debugging:
+
+                        Serial snapshot
+
+   To output a snapshot dump to a COM port, you have to first initialise
+   the port somewhere (preferably during program initialisation):
+
+        tsk_cprint_init (int port, int baud)
+
+   The "port" parameter may either be 1..4 to use the "relative"
+   COM port number COM1..COM4, or an absolute port address.
+   The "baud" parameter may be 24, 96, 192, 384, or 1150.
+      Example: 
+        tsk_cprint_init (1, 96);
+
+   The snapshot is invoked with 
+
+        comsnapshot ();
+
+
+   After the port is initialised, you can also get input characters, for
+   example to trigger the snapshot dump using the remote terminal. There
+   are two routines:
+
+        tsk_cprint_getc ()
+           Reads a character from the comm port if one is available.
+           The upper byte contains the line status on return, the lower
+           byte the received character or 0. The zero flag is set if
+           there is no character.
+
+        tsk_cprint_waitc ()
+           Waits for and reads a character from the comm port.
+           The upper byte contains the line status on return, the lower
+           byte the received character.
+
+
+   Note: The port should not be used for other, especially interrupt
+   driven, activities. The tsk_cprint... routines use polling to allow a
+   snapshot to be output even when the system is unstable.
+
+
+                ----------------------------
+
+When compiling some of the files, you will get warnings about
+unreferenced formal parameters. This is normal, and should be
+ignored. The Turbo C pragma for turning off those warnings is not
+compatible with Microsoft, so it is not used in the current version.
+
+Please inspect the sample sources before trying them out. Some samples
+use serial output, and may hang if no terminal is connected to the serial
+port. Other samples may directly access video memory on mono or color
+cards without checking for their existance, which may crash your system.
+The samples are provided only as a test base, not as ready-to-use code.
+
+                ----------------------------
+
+Note that the Turbo C batch and make files refer to "lib" and
+"tmake", where Turbo users would normally use "tlib" and "make". This
+is to resolve naming conflicts in my own configuration. To use the
+files in a "standard" Turbo configuration, you may have to edit the
+files, or provide suitable alias definitions.
+
+The huge model make files are not yet up to date with new versions of BC.
+If you should need huge model support, you may have to edit the make files,
+please use the standard make files as an example.
+
+                ----------------------------
+
+Don't use TASM 1.0 to assemble the CTask routines. Version 1.0 of
+Borland's TASM has severe problems with the extended model
+directives, which will cause Assembly time errors, and, if you get
+past them, run time crashes. Versions 1.01 and later of TASM are safe
+to use.
+
+You can also use MASM 5.1 for the TC version, just edit the make
+files to change the assembler name.
+
+You will probably NOT be successfull trying to assemble the CTask
+routines with MASM 6.0. Microsoft managed to make their new version
+so totally incompatible with the old one that it's quite a feat to
+adapt sources to the new version while still staying compatible with
+the other assemblers. On top of this, MASM 6.0 is extremely buggy.
+Therefore, I will not adapt CTask to 6.0. If you don't have access to
+MASM 5.1, please get Borlands TASM.
+
+From what I have heard, Microsoft MASM 6.1 is supposed to be more
+useable than 6.0, especially regarding 5.1 compatibility. I don't have
+a copy of 6.1 yet, so you'd have to check it out yourself.
+
+                ----------------------------
+
+The manual included is ready for printing. No fancy formatting 
+was used, and the page length was chosen to fit the short 
+American sized paper. The only control character your printer 
+must understand is the formfeed. 
+
+                ----------------------------
+
+Files in the archives:
+
+Compiled CTask kernel and support routines
+
+   CTASKMS.LIB  CTask kernel, Microsoft C (any model)
+   CTSUPMSL.LIB CTask support routines, MS-C (large model)
+
+        The files were compiled with MSC 8.0 (MS Visual C++ 1.0).
+
+   CTASKTC.LIB  CTask kernel, Turbo C (any model except Tiny & Huge)
+   CTSUPTCL.LIB CTask support routines, Turbo C (large model)
+
+        The files were compiled with Borland C++ 3.1.
+
+Documentation
+
+   READ.ME      This file
+   CTASK.DOC    Documentation for CTask, ready for printing
+   FERRARI.DOC  Commercial advertising, required reading
+
+   CTASK.DEF    Periscope debugger record definition file
+
+Include Files
+
+   KBD.H        Keyboard scan code and flag definitions for Hotkeys
+   PRT.H        Include file required for printer driver
+   SIO.H        Include file required for serial driver
+   TSK.H        Include file required for CTask kernel
+   TSKCONF.H    CTask configuration options (C and Assembler)
+   TSKDEB.H     Debug mode configuration (C and Assembler)
+   TSKLOCAL.H   Include file for internal CTask use
+   TSKPRF.H     Function prototypes for printf replacement routines
+   TSKSUP.H     Include file required for support routines
+
+   TSK.MAC      Assembler include file
+
+Source files for the CTask kernel
+                
+   TSKASM.ASM   Scheduler and miscellaneous ASM routines
+   TSKBIOS.ASM  AT BIOS wait/post handler (INT 15)
+   TSKDOS.ASM   DOS multiplex interface for CTask
+   TSKEMS.ASM   EMS support routines
+   TSKINT17.ASM BIOS printer interface (INT 17)
+   TSKKBD.ASM   Keyboard interface and hotkey handler
+   TSKNDP.ASM   Numerioc coprocessor support routines
+   TSKPRTI.ASM  Printer driver interrupt stack switcher
+   TSKQUE.ASM   Queue handling
+   TSKRES.ASM   CTask residency check
+   TSKSEC.ASM   DOS and Keyboard interface routines
+   TSKSIOI.ASM  Serial driver interrupt stack switcher
+   TSKSTCK.ASM  Stack switch routine
+   TSKSTUB.ASM  Code sharing function stubs/entry table
+   TSKTIM.ASM   Timer tick interface (INT 8)
+
+   TSKBUF.C     Buffer events
+   TSKCNT.C     Counter events
+   TSKFLG.C     Flag events
+   TSKGRP.C     Group creation/removal
+   TSKHOT.C     Hotkey creation
+   TSKINST.C    Main kernel installation/removal
+   TSKMAIN.C    Main CTask installation routines
+   TSKMEMW.C    Memory watches
+   TSKMSG.C     Mailbox events
+   TSKNAME.C    Name searching
+   TSKPORW.C    Port watches
+   TSKPIP.C     Pipe events
+   TSKPRT.C     Printer driver
+   TSKRSC.C     Resource events
+   TSKSIO.C     Serial I/O driver
+   TSKSUB.C     Subroutines for internal CTask use
+   TSKTASK.C    Main task related routines
+   TSKTICK.C    Ticker handling
+   TSKTOPS.C    Timeout and watch routines
+   TSKTSUB.C    Timer/watch helper subroutines
+   TSKTTSK.C    Timer task
+   TSKTUTL.C    Task utility subroutines
+   TSKUTIL.C    Miscellaneous utilitiy routines
+   TSKWPIP.C    Word pipe events
+
+Support routine source files
+
+   CONOUT.C     Console output support
+   TSKALLOC.C   Memory allocation RTL interface
+   TSKSNAP.C    Snapshot dump utility
+   TSKPRF.ASM   Printf replacement routines
+
+Sample application sources
+
+   MINRES.ASM   Minimal resident CTask
+   TESTMOD.ASM  Check for model independence
+
+   RES.C        CTask TSR
+   SNAP.C       Snapshot dump
+   SPAWN.C      Spawn DOS
+   TEST.C       General Test
+   TPRT.C       Test printer driver
+   TSIO.C       Test serial driver
+
+Batch files to make kernel and samples
+
+   MS.BAT       Make Kernel and support routines, MS-C
+   SAMPMS.BAT   Make Sample applications, MS-C
+   CTC.BAT      Make Kernel and support routines, Turbo C
+   SAMPTC.BAT   Make Sample applications, Turbo C
+   TCH.BAT      Make Kernel and support routines, Turbo C Huge model
+   BC.CFG       Compiler configuration file, BC++ 3.1
+   CBC.BAT      Make Kernel and support routines, BC++
+
+Microsoft Make files for Microsoft C 6.0/MASM 5.1
+
+   CTASK.MS     Make Kernel
+   CTSUP.MS     Make Support Routines
+
+   MINRES.MS    Make MINRES.ASM
+   RES.MS       Make RES.C
+   SNAP.MS      Make SNAP.C
+   SPAWN.MS     Make SPAWN.C
+   TEST.MS      Make TEST.C
+   TESTMOD.MS   Make TESTMOD.ASM
+   TPRT.MS      Make TPRT.C
+   TSIO.MS      Make TSIO.C
+
+Borland Make files for Turbo C/TASM
+
+   CTASK.TC     Make Kernel
+   CTASK.BC     Make Kernel, BC++
+   CTSUP.TC     Make Support Routines
+   CTSUP.BC     Make Support Routines, BC++
+
+   CTASKH.TC    Make Kernel, Huge model
+   CTASKH.BC    Make Kernel, Huge model, BC++
+   CTSUPH.TC    Make Support Routines, Huge model
+   CTSUPH.BC    Make Support Routines, Huge model, BC++
+                
+   MINRES.TC/BC Make MINRES.ASM
+   RES.TC/BC    Make RES.C
+   SNAP.TC/BC   Make SNAP.C
+   SPAWN.TC/BC  Make SPAWN.C
+   TEST.TC/BC   Make TEST.C
+   TESTMOD.TC/BC Make TESTMOD.ASM
+   TPRT.TC/BC   Make TPRT.C
+   TSIO.TC/BC   Make TSIO.C
+

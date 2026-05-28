@@ -1,0 +1,93 @@
+
+                     Ferrari electronic GmbH
+
+
+Ferrari electronic GmbH provides standard software and hardware 
+products as well as customer specific solutions. 
+
+For customer specific and OEM developments, we can offer you com-
+plete turnkey systems, or work with you in all stages of product 
+development, from the specification through hardware and software 
+implementation. We provide consulting, CAD schematic design, CAD 
+layout services, and small to medium volume manufacuturing on the 
+hardware side, as well as consulting, design, and implementation 
+of complete software systems or single modules. 
+
+Our main field of work is telecommunications, with current
+developments ranging from Fax G3 and G4, through Modems and Teletex
+equipment, to ISDN solutions.
+
+For more information, call or write:
+
+         Ferrari electronic GmbH
+         Ruhlsdorfer Strasse 138
+         D-14513 Teltow
+         Germany
+         Phone: (+49-3328) 474 626
+         Fax:   (+49-3328) 438 04-0
+
+
+                     ferrariFAX FAX Product Line
+
+
+ferrariFAX single - Fax Processor Card with software
+
+   CAS-compatible processor-based fax card. Can operate in PC/XT/AT bus
+   computers (up to four cards per bus).
+   A 16-bit processor, 512k RAM, and FIFO bus interface for high speed 
+   data exchange minimize host processor loading, and allow minimal TSR 
+   size (approx. 30k) while supporting full background send and receive 
+   without disturbing foreground applications, including Microsoft 
+   Windows 3.0/3.1 in all modes.
+   G3 standard, 9600 bps with fallback to 7200, 4800, and 2400 bps.
+
+   Includes SAA-based DOS and Windows software (both versions share
+   the same user interface), and a Windows 3.1 printer driver to allow 
+   sending from any Windows application.
+   An optional HP-Laserjet emulation module provides full font and
+   graphics support for DOS-based applications.
+   In addition, all CAS-based software packages (PC-Tools 6.0, 
+   Fax-It for Windows, WinFax, etc.) can be used.
+
+   A UNIX version is available through netCS.
+
+   The card has passed postal certification for Germany, Austria,
+   and Switzerland.
+
+
+ferrariFAX Net - Simple FAX Network Software
+
+   ferrariFAX Net is a set of TSRs that routes CAS calls over
+   Netbios or Novell LANs, allowing a single ferrariFAX card to
+   be shared in a network. No dedicated server is required.
+   Reception is possible on the server only, transmission is on-line,
+   i.e. stations sending a fax must be running.
+
+
+ferrariFAX Server - Advanced FAX Network Software
+
+   ferrariFAX Server is a full network solution for Netbios and
+   Novell LANs. It supports up to 250 users (up to 64 concurrent
+   users) per server, up to four cards per server, and multiple 
+   servers per net. Password protection and automatic routing of
+   incoming faxes provide privacy. Routing can be based on several
+   criteria, like receiver name, or the Fax ID of the sender. In
+   conjunction with ferrariFAX ISDN, faxes can also be routed using
+   the called number.
+   The software is currently in Beta test, and will be shipped Q3/93.
+
+
+ferrariFAX ISDN - Fax Processor Card for G3 fax over ISDN
+
+   Providing the same basic functionality and host interface as the analog
+   card, the ISDN card offers additional features especially useful
+   in conjunction with ferrariFAX Server. Incoming faxes can be
+   automatically routed to recipients based on the dialling
+   information.
+   The current design supports one B-channel per card, two cards can
+   be combined to utilize the full capacity of the ISDN line.
+   Both the point-to-point and point-to-multipoint variants of the
+   German ISDN protocols are supported, Euro-ISDN will be supported 
+   as soon as it is introduced.
+   The card is currently in Beta test, and will be shipped Q3/93.
+

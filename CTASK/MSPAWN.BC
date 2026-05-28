@@ -1,0 +1,27 @@
+#
+#  --- Version 2.2 92-05-15 16:06 ---
+# 
+#  CTask sample applications Make-File for Borland's make.
+#  Application: MSPAWN.C
+#
+#    "reqopt" contains required options, and shouldn't normally be changed.
+#    "optopt" lists optional optimization options, and may be changed.
+#    "model"  is the memory model letter to use (all except Tiny & Huge).
+#    "lib"    is the Turbo C library path
+#
+reqopt=-c -N- -a- -u -K
+optopt=-d -G -O -k- -w -v -vi
+!if !$d(model)
+model=l
+!endif
+ctlib=ctasktc
+
+.c.obj:
+   bcc $(reqopt) $(optopt) -m$(model) $*.c
+
+mspawn.exe:     mspawn.obj  ctsuptc$(model).lib $(ctlib).lib
+   tlink /m /l /v c0$(model) $*,$*,$*,ctsuptc$(model) $(ctlib) c$(model)
+
+mspawn.obj:     mspawn.c tsk.h tskconf.h
+
+

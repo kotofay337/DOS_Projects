@@ -1,0 +1,537 @@
+/* -----------------------------------------------------------------------
+*
+*  P42out.C
+*
+*
+*  ----------------------------------------------------------------------- */
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include <dos.h>
+#include <bios.h>
+#include <time.h>
+#include <graphics.h>
+#include <ctype.h>
+#include "tbg_tc.h"
+#include "dbf.h"
+#include "com.h"
+#include "data.h"
+#include "editstr.h"
+
+//#undef DEBUG
+
+/* ----------------------------------------------------------------------- */
+typedef
+   enum{
+      SCAN,
+      WAITSCAN,
+      MANUALINPUT,
+      GETBASE,
+      GRNINPUT,
+      WAITGRNINPUT,
+      COMPAREGRN,
+      OUTINFO,
+      WAIT,
+      WAITQSL,
+      MONEYGET,
+      WAITMONEYGET,
+      WAITFR,
+      SHB,
+      WAITSHB,
+      STOPPROGRAM,
+      ERROROUT,
+      ERROR
+   }STEP;
+
+static STEP Step = SCAN, SaveStep;
+static LPDBF db, dbParking;
+static char stringedit[15];
+static int editobj = 100, editnum = 0, dolg = 0;
+static OBJECT **m = NULL, **pd = NULL;
+
+static int BlinkObject[2];
+static char *GRNs;
+static int   GRNLen;
+static int   iGRN = 0;
+static int NOs, NOe, NOc;
+static int NumRunning;
+static char *nfPlaceNum    = "NМЕСТА",
+            *nfUseParking  = "НАСТОЯНКЕ",
+            *nfCarCategory = "ЛГ",
+            *nfInUse       = "ЗАНЯТО",
+            *nfGRN         = "ГРН",
+            *nfBC          = "ШК",
+            *nfNumRunning  = "ОСТАЛОСЬ" ,
+            *keyInFree     = "0",
+            *keyInUse      = "1",
+            *keyInMark     = "2",
+             PlaceNum[16],
+             NumRunningBuf[6],
+             BCBuf[16],
+            *nfsOutPerson[]={
+"ФИО",      // 0
+"МАРКА",    // 1
+"С",        // 2
+"ПО",       // 3
+"ОСТАЛОСЬ", // 4
+"КАТЕГОРИЯ" // 5
+};
+static struct date EndDate;
+static struct time EndTime;
+
+#define FSIZE 4
+static char* Formats[][FSIZE] = {
+{Info3, ABCRus, DecDig, CtrKey} // грн
+};
+/* ----------------------------------------------------------------------- */
+static BOOL CheckFieldsFormat (char *f[][FSIZE], int nf, int maxnf, int ikey){
+   int j;
+   if(nf < 0 || nf > maxnf){
+      return FALSE;
+   }/* if */
+   for(j = 1;j < FSIZE;j++){
+      if(f[nf][j]){
+         if(strchr(f[nf][j], ikey) != NULL){
+            return TRUE;
+         }/* if */
+      }/* if */
+   }/* for */
+   return FALSE;
+}/* CheckFieldsFormat */
+/* ----------------------------------------------------------------------- */
+// выезд по абонементу
+int Post4_2out(void){
+
+   int D, M, Y;
+   struct date d;
+   struct time t;
+
+   if(Step == SCAN){
+      load_file(&p, "tbg\\scan1out.tbg");
+      outpic_all(p);
+      ClearScan = TRUE;
+      iGRN = 0;
+      BlinkObject[0] = 0;
+      BlinkObject[1] = 0;
+      Step = WAITSCAN;
+      SaveStep = 0;
+      return 0;
+   }/* if */
+
+   if(Step == WAITSCAN){
+      OutTime(p);
+
+      if(Key != 0){
+#ifdef DEBUG
+         if(Key == ESC){
+            del_pic(&p);
+            Step = SCAN;
+            return 1;
+         }/* if */
+#endif
+         if(Key == 'b'){
+            Scanned = TRUE;
+         }/* if */
+         if(isdigit(Key)){
+            load_file(&m, "tbg\\manscan1.tbg");
+            outpic_all(m);
+            stringedit[0] = 0;
+            Edit_Init(m,editobj,editnum,stringedit, strlen_obj_num(m,editobj,editnum) + 1);
+            Refresh_Display(m,editobj,editnum);
+            EditLine_obj_num(m,editobj,editnum);
+            Step = MANUALINPUT;
+            return 0;
+         }/* if */
+      }/* if */
+      return 0;
+   }/* if */
+
+   if(Step == MANUALINPUT){
+      OutTime(p);
+      switch(EditLine_obj_num(m,editobj,editnum)){
+         case OK      :
+            strcpy(ScanBuf, Edit_Stop(m,editobj,editnum));
+            del_pic(&m);
+            RecordEvent(Scanned ? ScannerBCInput : ManualBCInput);
+            RecordBC(ScanBuf, Scanned ? 0 : 1);
+            Step = GETBASE;
+            return 0;
+         case CONTINUE:
+            return 0;
+         case HELP    :
+            return 0;
+      }//switch
+      return 0;
+   }/* if */
+
+   if(Step == GETBASE){
+      db = DBFOpen(2); // Абонемент
+      if(db == NULL){
+         MessageBox("Ошибка открытия БД", "БД 'Абонементы' не открывается.");
+         RecordEvent(ErrorGeneral1);
+         Step = ERROROUT;
+         return 0;
+      }/* if */
+
+      DBFFindRecord(db, nfBC, ScanBuf);
+      if(DBFGetErrorNum() != DBF_OK){
+         if(DBFGetErrorNum() == DBF_ERROR_RECORD_NOT_FOUND){
+            MessageBox("Выезд по абонементу ЗАПРЕЩЁН!", "Документ с ШК:[%s]\nнедействителен!", ScanBuf);
+            RecordEvent(ErrorBCNotFound);
+            DBFClose(db);
+            Step = ERROROUT;
+            return 0;
+         }/* if */
+         else{
+            if(DBFMsgError(2) == 0){
+               DBFClose(db);
+               Step = ERROROUT;
+               return 0;
+            }/* if */
+            else{
+               DBFClose(db);
+               ErrorMsg(SysAdm);
+               RecordEvent(ErrorGeneral2);
+               del_pic(&p);
+               Step = SCAN;
+               return -1;
+            }/* elif */
+         }/* elif */
+      }/* if */
+
+      switch(CheckNGD(DBFGetFieldAsString(db, "NВЪЕЗДА"), NPost, GetDateType(NULL))){
+         case -1:
+         case -2:
+            MessageBox("Ошибка системы", "Ошибка в описании номеров въездов\nи/или типов дней!\nВызовите системного администратора.");
+            DBFClose(db);
+            Step = ERROROUT;
+            return 0;
+         case 2:
+            MessageBox("Выезд по абонементу", "Разрешается\n"
+                                              "но не в сегодняшний день.");
+            DBFClose(db);
+            Step = ERROROUT;
+            return 0;
+      }/* switch */
+
+      if(DBFGetFieldAsString(db, nfUseParking)[0] == keyInFree[0]){
+         MessageBox("Стоянка", "Выезд по абонементу запрещен!\nНет на стоянке.");
+         DBFClose(db);
+         Step = ERROROUT;
+         return 0;
+      }/* if */
+
+      DBFGetFieldAsDate(db, nfsOutPerson[3], &d);
+      DBFGetFieldAsTime(db, "ПОВРЕМЯ", &t);
+      if((CheckAfterDate(&d, &t, &dt, &tm) >= 1) && (SaveStep != Step)){
+         MessageBox("Выезд по абонементу",
+                    "Предупреждение!\n"
+                    "Выезжает позже срока!");
+         SaveStep = Step;
+         Step = WAIT;
+         return 0;
+      }/* if */
+
+      strcpy(PlaceNum, DBFGetFieldAsString(db, nfPlaceNum));
+      strcpy(BCBuf, DBFGetFieldAsString(db, nfBC));
+
+      GRNLen = strlen(DBFGetFieldAsString(db, nfGRN));
+      GRNs = calloc(1U, GRNLen);
+      if(GRNs){
+         strcpy(GRNs, DBFGetFieldAsString(db, nfGRN));
+      }/* if */
+      else{
+         ErrorMsg(SysAdm);
+         RecordEvent(ErrorGeneral3);
+         Step = SCAN;
+         return -1;
+      }/* elif */
+
+      Step = GRNINPUT;
+/* расширение
+      if(GRNs[0] == '*'){
+         Step = OUTINFO;
+      }/* if */
+*/
+      return 0;
+   }/* if */
+
+   if(Step == GRNINPUT){
+      del_pic(&p);
+      load_file(&p, "tbg\\reg1out.tbg");
+      outpic_all(p);
+      stringedit[0] = 0;
+      Edit_Init(p,editobj,editnum,stringedit, strlen_obj_num(p,editobj,editnum) + 1);
+      Refresh_Display(p,editobj,editnum);
+      EditLine_obj_num(p,editobj,editnum);
+      Step = WAITGRNINPUT;
+      return 0;
+   }/* if */
+
+   if(Step == WAITGRNINPUT){
+      OutTime(p);
+      if(Key){
+         // проверить вводимые символы на допустимость
+         // и выдать ИнфоМсг если ошибка
+         if(CheckFieldsFormat(Formats, 0, 1, Key) == FALSE){
+            MessageBox("Фильтр ввода", Formats[0][0]);
+            SaveStep = Step;
+            Step = WAIT;
+            return 0;
+         }/* if */
+      }/* if */
+      switch(EditLine_obj_num(p,editobj,editnum)){
+         case OK      :
+            Step = COMPAREGRN;
+            return 0;
+         case CONTINUE:
+            return 0;
+         case HELP    :
+            return 0;
+      }//switch
+      return 0;
+   }/* if */
+
+   if(Step == COMPAREGRN){
+      char *ss = Edit_Stop(p,editobj,editnum);
+      RecordGRN(ss);
+      if((strlen(ss) > 1) && (CheckGRN(GRNs, ss))){
+         if(GRNs){
+            free(GRNs);
+         }/* if */
+         Step = OUTINFO;
+      }/* if */
+      else{
+         Step = GRNINPUT;
+         iGRN++;
+         if(iGRN >= InpGRN){
+            ErrorMsg("Выезд ЗАПРЕЩЕН! "
+                     " Неправильный   "
+                     "     ГРН!       ");
+            RecordEvent(ErrorInputREGNUM);
+            if(GRNs){
+               free(GRNs);
+            }/* if */
+            DBFClose(db);
+            Step = ERROROUT;
+         }/* if */
+      }/* elif */
+      return 0;
+   }/* if */
+
+   if(Step == OUTINFO){
+      int i;
+      del_pic(&p);
+      load_file(&p, "tbg\\p42out.tbg");
+      outpic_all(p);
+
+      getmin_obj(p, 99, (short int*)&NOs);
+      getmax_obj(p, 99, (short int*)&NOe);
+      NOc = NOs;
+
+      for(i = NOs;i <= NOe;i++){
+         switch(i - NOs){
+            case 2:
+            case 3:
+
+               if(DBFGetFieldAsDate(db, nfsOutPerson[i - NOs], &d)){
+                  sprintf(stringedit, "%2.d-%2.2d-%4.4d", d.da_day, d.da_mon, d.da_year);
+                  outtext_obj_num(p, i, 0, EGA_DARKGRAY, stringedit, SHOW);
+                  if(i - NOs == 3){
+                     double t = 0.0;
+                     DBFGetFieldAsDate(db, "ПО", &EndDate);
+                     DBFGetFieldAsTime(db, "ПОВРЕМЯ", &EndTime);
+                     if(CheckAfterDate(&EndDate, &EndTime, &dt, &tm)){
+                        t = CalcTarif(TDABONEMENT, TCPERESTOY, &EndTime, &EndDate, &tm, &dt);
+                        if(t >= 0.01){// 1 коп.
+                           // клиент задолжал 1 копейку и более
+                           BlinkObject[0] = i;
+                           load_file(&pd, "tbg\\dolg.tbg");
+                           outpic_all(pd);
+                           sprintf(starif, ftarif, (unsigned)((long)t),
+                                                   (unsigned)((t - ((long)t)) * 100.));
+                           outtext_obj_num(pd, 200, 0, EGA_CYAN, starif, SHOW);
+                           del_pic(&pd);
+                           dolg = 1;
+                        }/* if */
+                     }/* if */
+                  }/* if */
+               }/* if */
+               break;
+
+            default:
+               outtext_obj_num(p, i, 0, EGA_DARKGRAY, DBFGetFieldAsString(db, nfsOutPerson[i - NOs]), SHOW);
+               break;
+         }/* switch */
+      }/* for */
+      DBFClose(db);
+      Step = WAITQSL;
+      return 0;
+   }/* if */
+
+   if(Step == WAITQSL){
+      OutTime(p);
+      {
+         int BlinkIndex;
+         static long BlinkTime = 0;
+         static int Blink = 0;
+         if(((bt - BlinkTime) / CLK_TCK) > .25F){
+            BlinkTime = bt;
+            for(BlinkIndex = 0;BlinkIndex < sizeof(BlinkObject) / sizeof(BlinkObject[0]);BlinkIndex++){
+               if(BlinkObject[BlinkIndex]){
+                  if(Blink){
+                     outpic_obj_num_color(p, BlinkObject[BlinkIndex], 0, EGA_YELLOW);
+                  }/* if */
+                  else{
+                     outpic_obj_num(p, BlinkObject[BlinkIndex], 0);
+                  }/* elif */
+               }/* if */
+            }/* for */
+            Blink = !Blink;
+         }/* if */
+
+      }
+      if(Key == ENTER){
+         del_pic(&p);
+         if(dolg){
+            dolg = 0;
+            Step = MONEYGET;
+            return 0;
+         }/* if */
+         Step = SHB;
+      }/* if */
+      if(ExtKey == END){
+         MessageBox("Выезд по абонементу", "Выезд отменён оператором");
+         RecordEvent(StopProcedureOUTPUT);
+         Step = ERROROUT;
+      }/* if */
+      return 0;
+   }/* if */
+
+   if(Step == MONEYGET){
+      load_file(&p, "tbg\\t41out.tbg");
+      outpic_all(p);
+      outtext_obj_num(p, 50, 1, getcolor_obj_num(p, 50, 0), starif, SHOW);
+      Step = WAITMONEYGET;
+      return 0;
+   }/* if */
+
+   if(Step == WAITMONEYGET){
+      OutTime(p);
+      if(Key == '*'){
+         del_pic(&p);
+         Step = WAITFR;
+      }/* if */
+      if(ExtKey == END){
+         MessageBox("Оплата через ФР", "Отменена оператором");
+         RecordEvent(StopProcedureOUTPUT);
+         Step = ERROROUT;
+      }/* if */
+      return 0;
+   }/* if */
+
+   if(Step == WAITFR){
+      OutTime(p);
+      switch(PrintFR(Tarif)){
+         case 1:// ok
+            Step = SHB;
+            RecordFRMoney(Tarif);
+            RecordEvent(FRPrint);
+            break;
+         case 0:// wait
+            break;
+         case -1:// error
+            del_pic(&p);
+            Step = SCAN;
+            return -1;
+      }/* switch */
+      return 0;
+   }/* if */
+
+   if(Step == SHB){
+      Step = WAITSHB;
+      return 0;
+   }/* if */
+
+   if(Step == WAITSHB){
+      switch(WorkSHBOut()){
+         case -1: // error
+            Step = SCAN;
+            return -1;
+         case  0: // wait
+            break;
+         case  1: // ok
+            {
+               char tGRN[16];
+
+               db = DBFOpen(2); // Абонементы
+               DBFFindRecord(db, nfBC, BCBuf);
+               if(DBFGetErrorNum() != DBF_OK){
+                  DBFClose(db);
+                  return -1;
+               }/* if */
+               else{
+                  strcpy(tGRN, DBFGetFieldAsString(db, nfGRN));
+                  DBFSetFieldAsString(db, nfUseParking, keyInFree);
+                  DBFPutRecord(db);
+                  DBFClose(db);
+               }/* elif */
+
+               dbParking = DBFOpen(3); // Стоянка
+               DBFFindRecord(dbParking, nfPlaceNum, PlaceNum);
+               if(DBFGetErrorNum() != DBF_OK){
+                  DBFClose(dbParking);
+               }/* if */
+               else{
+                  DBFSetFieldAsString(dbParking, nfInUse, keyInMark);
+                  DBFSetFieldAsString(dbParking, nfGRN, "Абонемент");
+                  DBFPutRecord(dbParking);
+                  DBFClose(dbParking);
+               }/* elif */
+
+            }
+            Step = STOPPROGRAM;
+            return 1;
+      }/* switch */
+      return 0;
+   }/* if */
+
+   if(Step == STOPPROGRAM){
+      Step = SCAN;
+      return 1;
+   }/* if */
+
+   if(Step == ERROR){
+      OutTime(p);
+      if(Key == ENTER){
+         del_pic(&p);
+         Step = SCAN;
+      }/* if */
+      return 0;
+   }/* if */
+
+   if(Step == ERROROUT){
+      OutTime(p);
+      if(Key == ENTER){
+         MessageBox(NULL, NULL);
+         del_pic(&p);
+         Step = SCAN;
+         return 1;
+      }/* if */
+      return 0;
+   }/* if */
+
+   if(Step == WAIT){
+      OutTime(p);
+      if(Key == ENTER){
+         MessageBox(NULL, NULL);
+         Step = SaveStep;
+      }/* if */
+      return 0;
+   }/* if */
+
+   return -1;
+
+}/* Post4_2out */
+/* ----------------------------------------------------------------------- */
